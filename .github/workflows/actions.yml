@@ -1,0 +1,30 @@
+name: Dev Build & Deploy
+run-name: ${{ github.actor }} want to deliver to development site
+on:
+  push:
+    branches:
+      - develop
+jobs:
+  Build-and-Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ensure NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.10.0
+      - name: Ensure Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: 1.0.21
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: bun install
+      - name: Build static pages
+        run: bun run build
+      - name: Deploy to AWS S3 bucket
+        run: aws s3 sync ./out s3://dev-master-site
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: 'ap-southeast-1'
