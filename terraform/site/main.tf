@@ -70,6 +70,9 @@ resource "aws_cloudfront_origin_access_control" "oac" {
 
 resource "aws_cloudfront_cache_policy" "cdn_cache_policy" {
   name = "${terraform.workspace}-master-site-cdn-cache-policy"
+  min_ttl = 0
+  max_ttl = 1800
+  default_ttl = 900
   parameters_in_cache_key_and_forwarded_to_origin {
     cookies_config {
       cookie_behavior = "none"
